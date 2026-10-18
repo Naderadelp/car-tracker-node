@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  cars         Car[]
+
+  @@map("users")
+}
+
+model Car {
+  id          Int        @id @default(autoincrement())
+  userId      Int        @map("user_id")
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  make        String
+  model       String
+  color       String?
+  currentKm   Int        @default(0) @map("current_km")
+  tankSize    Decimal?   @map("tank_size") @db.Decimal(6, 2)
+  purchasedAt DateTime?  @map("purchased_at") @db.Date
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  logs        CarLog[]
+  reminders   Reminder[]
+
+  @@index([userId])
+  @@map("cars")
+}
+
+model CarLog {
+  id                Int      @id @default(autoincrement())
+  carId             Int      @map("car_id")
+  car               Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  title             String
+  category          String?
+  odometerAtService Int      @map("odometer_at_service")
+  actualCost        Decimal? @map("actual_cost") @db.Decimal(10, 2)
+  performedAt       DateTime @map("performed_at") @db.Date
+  notes             String?
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@index([carId])
+  @@map("car_logs")
+}
+
+model Reminder {
+  id          Int       @id @default(autoincrement())
+  carId       Int       @map("car_id")
+  car         Car       @relation(fields: [carId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  remindOn    DateTime? @map("remind_on") @db.Date
+  remindAtKm  Int?      @map("remind_at_km")
+  notifiedAt  DateTime? @map("notified_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([carId])
+  @@map("reminders")
+}

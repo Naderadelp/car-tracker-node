@@ -5,6 +5,7 @@ import { errorHandler } from './middleware/error-handler.ts';
 import { authRouter } from './modules/auth/auth.routes.ts';
 import { carLogsRouter } from './modules/car-logs/car-logs.routes.ts';
 import { carsRouter } from './modules/cars/cars.routes.ts';
+import { dueRemindersRouter } from './modules/reminders/due-reminders.routes.ts';
 import { carRemindersRouter } from './modules/reminders/reminders.routes.ts';
 
 export const app = express();
@@ -23,6 +24,7 @@ api.use(authenticate);
 api.use('/cars', carsRouter);
 api.use('/cars/:carId/logs', carLogsRouter);
 api.use('/cars/:carId/reminders', carRemindersRouter);
+api.use('/reminders', dueRemindersRouter);
 
 app.use('/api', api);
 

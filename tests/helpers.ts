@@ -1,3 +1,4 @@
+import { prisma } from '../src/lib/prisma.ts';
 import { register } from '../src/modules/auth/auth.service.ts';
 
 let counter = 0;
@@ -11,4 +12,10 @@ export async function createUser(overrides: { name?: string; email?: string; pas
     password: overrides.password ?? 'password123',
   });
   return { user, token, auth: `Bearer ${token}` };
+}
+
+export function createCar(userId: number, data: { currentKm?: number } = {}) {
+  return prisma.car.create({
+    data: { userId, make: 'Toyota', model: 'Corolla', currentKm: data.currentKm ?? 0 },
+  });
 }

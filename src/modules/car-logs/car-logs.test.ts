@@ -106,6 +106,18 @@ describe('car logs', () => {
     expect(res.status).toBe(404);
   });
 
+  it('returns 422, not 500, for an odometer reading too big for the database', async () => {
+    const { user, auth } = await createUser();
+    const car = await createCar(user.id);
+
+    const res = await request(app)
+      .post(`/api/cars/${car.id}/logs`)
+      .set('Authorization', auth)
+      .send({ ...validLog, odometerAtService: 3_000_000_000 });
+
+    expect(res.status).toBe(422);
+  });
+
   it('rejects a log without the required fields with 422', async () => {
     const { user, auth } = await createUser();
     const car = await createCar(user.id);

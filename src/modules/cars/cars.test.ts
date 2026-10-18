@@ -128,6 +128,18 @@ describe('cars', () => {
     expect(show.body.error.message).toBe('Car not found');
   });
 
+  it('returns 422, not 500, for numbers too big for the database', async () => {
+    const { auth } = await createUser();
+
+    const hugeId = await request(app).get('/api/cars/99999999999').set('Authorization', auth);
+    const hugeKm = await request(app)
+      .post('/api/cars')
+      .set('Authorization', auth)
+      .send({ make: 'Kia', model: 'Rio', currentKm: 3_000_000_000 });
+
+    expect([hugeId.status, hugeKm.status]).toEqual([422, 422]);
+  });
+
   it('returns 422 for a non-numeric car id', async () => {
     const { auth } = await createUser();
 

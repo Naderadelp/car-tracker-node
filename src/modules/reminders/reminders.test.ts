@@ -36,6 +36,18 @@ describe('reminders CRUD', () => {
     expect(res.body.error.details.fieldErrors.remindOn).toEqual(['Provide remindOn, remindAtKm, or both']);
   });
 
+  it('returns 422, not 500, for a remindAtKm too big for the database', async () => {
+    const { user, auth } = await createUser();
+    const car = await createCar(user.id);
+
+    const res = await request(app)
+      .post(`/api/cars/${car.id}/reminders`)
+      .set('Authorization', auth)
+      .send({ title: 'Far away', remindAtKm: 3_000_000_000 });
+
+    expect(res.status).toBe(422);
+  });
+
   it('rejects a PATCH that would leave neither remindOn nor remindAtKm', async () => {
     const { user, auth } = await createUser();
     const car = await createCar(user.id);

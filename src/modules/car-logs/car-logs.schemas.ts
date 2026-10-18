@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { id, isoDate } from '../../lib/schemas.ts';
+import { id, isoDate, km } from '../../lib/schemas.ts';
 import { carParams } from '../cars/cars.schemas.ts';
 
 export const logParams = carParams.extend({ logId: id });
@@ -7,7 +7,7 @@ export const logParams = carParams.extend({ logId: id });
 export const createLogBody = z.object({
   title: z.string().trim().min(1).max(100),
   category: z.string().trim().min(1).max(50).nullish(),
-  odometerAtService: z.number().int().min(0),
+  odometerAtService: km,
   actualCost: z.number().min(0).max(99999999.99).nullish(),
   performedAt: isoDate,
   notes: z.string().max(5000).nullish(),

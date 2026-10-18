@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { id, isoDate } from '../../lib/schemas.ts';
+import { id, isoDate, km } from '../../lib/schemas.ts';
 
 export const carParams = z.object({ carId: id });
 
@@ -8,7 +8,7 @@ export const createCarBody = z.object({
   make: z.string().trim().min(1).max(50),
   model: z.string().trim().min(1).max(50),
   color: z.string().trim().min(1).max(30).nullish(),
-  currentKm: z.number().int().min(0).optional(),
+  currentKm: km.optional(),
   tankSize: z.number().positive().max(9999.99).nullish(),
   purchasedAt: isoDate.nullish(),
 });
